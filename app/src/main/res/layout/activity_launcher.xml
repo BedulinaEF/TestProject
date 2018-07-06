@@ -10,15 +10,19 @@
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/et_inn_hint"/>
+        android:hint="@string/et_inn_hint"
+        android:id="@+id/et_inn_id"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/et_password_hint"/>
+        android:hint="@string/et_password_hint"
+        android:id="@+id/et_password_id"/>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/btn_login"
+        android:id="@+id/button_login"
 
         />
 
