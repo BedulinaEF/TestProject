@@ -6,7 +6,7 @@
     <string name="et_password_hint">Password</string>
     <string name="call_center">Call Center</string>
     <string name="text_call_center">Calling...</string>
-    <string name="dialog_title">Dialog</string>
+    <string name="dialog_call_center_title">Dialog</string>
     <string name="dialog_message">Was it Helpfull?</string>
     <string name="yes_btn">Yes</string>
     <string name="no_btn">No</string>
