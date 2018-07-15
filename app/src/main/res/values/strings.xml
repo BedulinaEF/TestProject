@@ -11,6 +11,8 @@
     <string name="no_btn">No</string>
     <string name="fail_btn">Fail</string>
     <string name="dialog_saved_data">Saved</string>
+    <string name="wrong_inn">Wrong INN</string>
+    <string name="wrong_password">Wrong password</string>
 
 
 
