@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.widget.Button;
 
 
 public class CallActivity extends Activity {
+    private String phoneNumber;
     private ProgressDialog dialog;
 
 
@@ -49,6 +52,9 @@ public class CallActivity extends Activity {
 
     private void makeCall() {
         //calling code
+        Intent makeCallIntent= new Intent(Intent.ACTION_DIAL);
+        makeCallIntent.setData(Uri.parse("tel:"+phoneNumber));
+        this.startActivity(makeCallIntent);
         doCallInfoRequest(5, "123");
         showDialogCallCenter();
     }
