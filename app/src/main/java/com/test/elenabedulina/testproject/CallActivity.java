@@ -1,9 +1,7 @@
 package com.test.elenabedulina.testproject;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,14 +12,15 @@ import android.view.View;
 import android.widget.Button;
 
 
-public class CallActivity extends Activity {
-    private String phoneNumber;
-    private ProgressDialog dialog;
+public class CallActivity extends BaseActivity {
+    public String callCenterNumber;
+
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        callCenterNumber=getIntent().getStringExtra(Constants.CALL_CENTER_NUMBER_NAME);
 
 
         setContentView(R.layout.activity_call);
@@ -53,26 +52,17 @@ public class CallActivity extends Activity {
     private void makeCall() {
         //calling code
         Intent makeCallIntent= new Intent(Intent.ACTION_DIAL);
-        makeCallIntent.setData(Uri.parse("tel:"+phoneNumber));
+        makeCallIntent.setData(Uri.parse("tel:"+callCenterNumber));
         this.startActivity(makeCallIntent);
-        doCallInfoRequest(5, "123");
+        doCallInfoRequest(5, callCenterNumber);
         showDialogCallCenter();
     }
 
-    private void showProgress() {
-        if (dialog == null) {
-            dialog = new ProgressDialog(CallActivity.this);
-            dialog.setTitle(R.string.text_call_center);
-        }
-        dialog.show();
-    }
-
-    private void hideProgress() {
-        dialog.hide();
-    }
 
 
-    private void doCallInfoRequest(int callDuration, String phoneNumber) {
+
+
+    private void doCallInfoRequest(int callDuration, String callCenterNumber) {
         showProgress();
         processResponseCalling();
         hideProgress();

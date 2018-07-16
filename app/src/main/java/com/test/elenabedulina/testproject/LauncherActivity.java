@@ -1,6 +1,5 @@
 package com.test.elenabedulina.testproject;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,9 +8,10 @@ import android.widget.Button;
 import android.widget.EditText;
 
 
-public class LauncherActivity extends Activity {
+public class LauncherActivity extends BaseActivity {
     private EditText etInn;
     private EditText etPassword;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,11 +25,8 @@ public class LauncherActivity extends Activity {
         Button btnLogin = findViewById(R.id.button_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent launcherIntent = new Intent(LauncherActivity.this,
-                        CallActivity.class);
-                if (checkInput()) {
-                    startActivity(launcherIntent);
-                }
+                makePostSignIn();
+
             }
         });
     }
@@ -50,4 +47,37 @@ public class LauncherActivity extends Activity {
 
         return innIsCorrect && passwordIsCorrect;
     }
+
+    public void makePostSignIn() {
+        showProgress();
+        getDataSingIn();
+        hideProgress();
+        startCallActivity();
+
+    }
+
+    private void startCallActivity() {
+        Intent launcherIntent = new Intent(LauncherActivity.this,
+                CallActivity.class);
+        launcherIntent.putExtra(Constants.CALL_CENTER_NUMBER_NAME,Constants.CALL_CENTER_NUMBER) ;
+
+        if (checkInput()) {
+            startActivity(launcherIntent);
+        }
+    }
+
+    private void getDataSingIn() {
+    }
+
+
+
+
+
+
+
+
 }
+
+
+
+
