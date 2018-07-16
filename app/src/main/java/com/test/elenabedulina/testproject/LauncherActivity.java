@@ -57,9 +57,10 @@ public class LauncherActivity extends BaseActivity {
     }
 
     private void startCallActivity() {
+        String callCenterNumberPut="12345678";
         Intent launcherIntent = new Intent(LauncherActivity.this,
                 CallActivity.class);
-        launcherIntent.putExtra(Constants.CALL_CENTER_NUMBER_NAME,Constants.CALL_CENTER_NUMBER) ;
+        launcherIntent.putExtra(Constants.CALL_CENTER_NUMBER_NAME,callCenterNumberPut) ;
 
         if (checkInput()) {
             startActivity(launcherIntent);
