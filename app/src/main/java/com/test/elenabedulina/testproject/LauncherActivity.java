@@ -1,6 +1,7 @@
 package com.test.elenabedulina.testproject;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -8,31 +9,29 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.test.elenabedulina.testproject.api.ZlifeService;
 import com.test.elenabedulina.testproject.api.models.SignInRequest;
 import com.test.elenabedulina.testproject.api.models.SignInResponse;
 
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class LauncherActivity extends BaseActivity {
     private EditText etInn;
     private EditText etPassword;
-    private ZlifeService zlifeService;
-    private final String TAG=LauncherActivity.class.getSimpleName();
+
+    private final String TAG = LauncherActivity.class.getSimpleName();
+    private String headerClient;
+    private String headerAccessToken;
+    private String headerUID;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
-
         etInn = findViewById(R.id.et_inn_id);
         etPassword = findViewById(R.id.et_password_id);
 
@@ -41,7 +40,6 @@ public class LauncherActivity extends BaseActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 makePostSignIn();
-
             }
         });
     }
@@ -66,8 +64,6 @@ public class LauncherActivity extends BaseActivity {
     public void makePostSignIn() {
         showProgress();
         doSingIn();
-
-
     }
 
     private void startCallActivity(String number) {
@@ -81,51 +77,48 @@ public class LauncherActivity extends BaseActivity {
         }
     }
 
+
     private void doSingIn() {
-        HttpLoggingInterceptor interceptor=new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://pc-staging.zlife.kz/api/v1/patient/")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        zlifeService = retrofit.create(ZlifeService.class);
         SignInRequest signInRequest = new SignInRequest();
         signInRequest.setIin(etInn.getText().toString());
         signInRequest.setPassword(etPassword.getText().toString());
-            zlifeService.signIn(signInRequest).enqueue(new Callback<SignInResponse>() {
-                @Override
-                public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
-                    if (response.code()>=200&&response.code()<300) {
-                        SignInResponse bodyResponse = response.body();
-                        String numberCall=bodyResponse.getContent().getCallCenter();
-                        startCallActivity(numberCall);
+        ((ApplicationZLife)getApplication()).getZlifeService().signIn(signInRequest).enqueue(new Callback<SignInResponse>() {
+            @Override
+            public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
+                if (response.code() >= 200 && response.code() < 300) {
+                    SignInResponse bodyResponse = response.body();
+                    String numberCall = bodyResponse.getContent().getCallCenter();
+                    Headers headers = response.headers();
+                    headerClient = headers.get("Client");
+                    headerAccessToken = headers.get("Access-token");
+                    headerUID = headers.get("UID");
+                    saveSharePref();
+                    startCallActivity(numberCall);
+                } else {
 
-                    } else {
-
-                        onFailure(call, new Exception(response.message()));
-
-                    }
-                    hideProgress();
+                    onFailure(call, new Exception(response.message()));
                 }
+                hideProgress();
+            }
 
-                @Override
-                public void onFailure(Call<SignInResponse> call, Throwable t) {
-                    errorDialog();
-                    Log.e(TAG, t.toString());
-                    hideProgress(); 
-
-                }
-
-
-            });
-
-
+            @Override
+            public void onFailure(Call<SignInResponse> call, Throwable t) {
+                errorDialog();
+                Log.e(TAG, t.toString());
+                hideProgress();
+            }
+        });
     }
 
+    public void saveSharePref() {
+        SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.key_shared_pref), this.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(Constants.KEY_CLIENT_HEADER, headerClient);
+        editor.putString(Constants.KEY_CLIENT_UID, headerUID);
+        editor.putString(Constants.KEY_CLIENT_TOKEN, headerAccessToken);
+        editor.commit();
+
+    }
 
 
 }

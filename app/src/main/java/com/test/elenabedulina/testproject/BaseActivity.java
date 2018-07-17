@@ -7,6 +7,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 
 public abstract class BaseActivity extends Activity{
+
+
     private ProgressDialog dialog;
     protected void showProgress(){
         if (dialog == null) {
@@ -29,8 +31,8 @@ public abstract class BaseActivity extends Activity{
                 })
                 .create();
         errorDialog.show();
-
     }
+
 
 }
 

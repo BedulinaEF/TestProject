@@ -16,6 +16,11 @@
     <string name="sign_in">Sign in...</string>
     <string name="error_dialog">Error</string>
     <string name="ok">Ok</string>
+    <string name="key_shared_pref">Shared Headers</string>
+    <string name="key_header_client">Client</string>
+    <string name="key_header_uid">UID</string>
+    <string name="key_header_token">Token</string>
+
 
 
 
