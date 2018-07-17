@@ -1,15 +1,16 @@
 package com.test.elenabedulina.testproject.api.models;
 
 public class SignInRequest {
-    private String inn;
+    private String iin;
     private String password;
 
-    public String getInn() {
-        return inn;
+
+    public String getIin() {
+        return iin;
     }
 
-    public void setInn(String inn) {
-        this.inn = inn;
+    public void setIin(String iin) {
+        this.iin = iin;
     }
 
     public String getPassword() {
