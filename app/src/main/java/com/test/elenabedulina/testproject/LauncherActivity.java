@@ -62,12 +62,11 @@ public class LauncherActivity extends BaseActivity {
 
         return innIsCorrect && passwordIsCorrect;
     }
-    // TODO
 
     public void makePostSignIn() {
         showProgress();
         doSingIn();
-        hideProgress();
+
 
     }
 
@@ -108,18 +107,25 @@ public class LauncherActivity extends BaseActivity {
                     } else {
 
                         onFailure(call, new Exception(response.message()));
+
                     }
+                    hideProgress();
                 }
 
                 @Override
                 public void onFailure(Call<SignInResponse> call, Throwable t) {
+                    errorDialog();
                     Log.e(TAG, t.toString());
+                    hideProgress(); 
 
                 }
+
+
             });
 
 
     }
+
 
 
 }

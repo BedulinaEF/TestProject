@@ -14,6 +14,8 @@
     <string name="wrong_inn">Wrong INN</string>
     <string name="wrong_password">Wrong password</string>
     <string name="sign_in">Sign in...</string>
+    <string name="error_dialog">Error</string>
+    <string name="ok">Ok</string>
 
 
 
