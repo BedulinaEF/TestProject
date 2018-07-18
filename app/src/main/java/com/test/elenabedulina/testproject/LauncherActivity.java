@@ -21,7 +21,6 @@ import retrofit2.Response;
 public class LauncherActivity extends BaseActivity {
     private EditText etInn;
     private EditText etPassword;
-
     private final String TAG = LauncherActivity.class.getSimpleName();
     private String headerClient;
     private String headerAccessToken;
@@ -109,6 +108,7 @@ public class LauncherActivity extends BaseActivity {
             }
         });
     }
+
 
     public void saveSharePref() {
         SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.key_shared_pref), this.MODE_PRIVATE);

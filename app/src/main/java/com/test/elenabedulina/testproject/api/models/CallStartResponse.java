@@ -1,13 +1,14 @@
 package com.test.elenabedulina.testproject.api.models;
 
 public class CallStartResponse {
-    private String id;
+    private CallContent content;
 
-    public String getId() {
-        return id;
+
+    public void setContent(CallContent content) {
+        this.content = content;
+    }
+    public CallContent getContent() {
+        return content;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
 }
