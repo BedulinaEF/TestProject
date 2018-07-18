@@ -39,7 +39,7 @@ public class ApplicationZLife extends Application {
                         takePref();
 //
                         Request request = chain.request().newBuilder()
-                                .addHeader(Constants.KEY_CLIENT_TOKEN,clientData)
+                                .addHeader(Constants.KEY_CLIENT_HEADER,clientData)
                                 .addHeader(Constants.KEY_CLIENT_UID, uIDData)
                                 .addHeader(Constants.KEY_CLIENT_TOKEN,tokenData )
                                 .build();

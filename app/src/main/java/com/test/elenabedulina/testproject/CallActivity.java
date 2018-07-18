@@ -11,9 +11,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.test.elenabedulina.testproject.api.models.CallStartResponse;
+
+import retrofit2.Call;
+import retrofit2.Response;
+
 
 public class CallActivity extends BaseActivity {
     public String callCenterNumber;
+
+    private final String TAG = CallActivity.class.getSimpleName();
 
 
 
@@ -39,15 +46,39 @@ public class CallActivity extends BaseActivity {
         showProgress();
         // code for request
         processResponseCallStart();
-        hideProgress();
         makeCall();
 
 
     }
 
     private void processResponseCallStart() {
+            ((ApplicationZLife)getApplication()).getZlifeService().getId().enqueue(new retrofit2.Callback<CallStartResponse>() {
+                @Override
+                public void onResponse(Call<CallStartResponse> call, Response<CallStartResponse> response) {
+                    if (response.code() >= 200 && response.code() < 300) {
+                        CallStartResponse bodyResponse = response.body();
+                        String takenID = bodyResponse.getId();
 
-    }
+                    } else {
+
+                        onFailure(call, new Exception(response.message()));
+                    }
+                    hideProgress();
+                }
+
+                @Override
+                public void onFailure(Call<CallStartResponse> call, Throwable t) {
+                    errorDialog();
+                    hideProgress();
+                    Log.e(TAG, t.toString());
+
+                }
+
+            });
+        }
+
+
+
 
     private void makeCall() {
         //calling code
@@ -55,7 +86,7 @@ public class CallActivity extends BaseActivity {
         makeCallIntent.setData(Uri.parse("tel:"+callCenterNumber));
         this.startActivity(makeCallIntent);
         doCallInfoRequest(5, callCenterNumber);
-        showDialogCallCenter();
+
     }
 
 
@@ -66,6 +97,7 @@ public class CallActivity extends BaseActivity {
         showProgress();
         processResponseCalling();
         hideProgress();
+        showDialogCallCenter();
     }
 
     private void processResponseCalling() {

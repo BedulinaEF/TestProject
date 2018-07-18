@@ -1,5 +1,6 @@
 package com.test.elenabedulina.testproject.api;
 
+import com.test.elenabedulina.testproject.api.models.CallStartResponse;
 import com.test.elenabedulina.testproject.api.models.SignInRequest;
 import com.test.elenabedulina.testproject.api.models.SignInResponse;
 
@@ -13,14 +14,15 @@ public interface ZlifeService {
    @Headers("Content-type: application/json")
    Call<SignInResponse> signIn(@Body SignInRequest signInModel);
 
-    //@POST("/calls/start")
+    @POST("calls/start")
+   Call<CallStartResponse> getId();
 
 
-    //@PUT("/calls/{ID}/end")
+    //@PUT("calls/{ID}/end")
 
 
 
-    //@PUT("/calls/{ID}/rating")
+    //@PUT("calls/{ID}/rating")
 
 
 
