@@ -1,5 +1,6 @@
 package com.test.elenabedulina.testproject;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -11,6 +12,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.test.elenabedulina.testproject.api.models.CallStartResponse;
 import com.test.elenabedulina.testproject.api.models.CallsIdEndRequest;
 import com.test.elenabedulina.testproject.api.models.RaitingRequest;
@@ -35,18 +42,55 @@ public class CallActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         callCenterNumber=getIntent().getStringExtra(Constants.CALL_CENTER_NUMBER_NAME);
-
-
         setContentView(R.layout.activity_call);
         Button btn_call_center = findViewById(R.id.btn_call_center);
         btn_call_center.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                makeCallStartRequest();
+                requestPermissionCall();
+//                makeCallStartRequest();
 
             }
         });
+    }
+    private void requestPermissionCall(){
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.CALL_PHONE)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        makeCallStartRequest();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        showPermissionDialog();
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+    }
+    private void showPermissionDialog(){
+        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        builder.setTitle(R.string.permission_title)
+                .setPositiveButton(R.string.permission_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                        makeCallStartRequest();
+
+                    }
+                })
+                .setNegativeButton(R.string.permission_no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                })
+                .show();
     }
 
     private void makeCallStartRequest() {
@@ -94,7 +138,7 @@ public class CallActivity extends BaseActivity {
 
     private void makeCall() {
         //calling code
-        Intent makeCallIntent= new Intent(Intent.ACTION_DIAL);
+        Intent makeCallIntent= new Intent(Intent.ACTION_CALL);
         makeCallIntent.setData(Uri.parse("tel:"+callCenterNumber));
         this.startActivity(makeCallIntent);
 
