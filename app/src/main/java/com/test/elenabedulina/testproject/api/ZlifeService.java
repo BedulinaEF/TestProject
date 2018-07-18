@@ -1,6 +1,7 @@
 package com.test.elenabedulina.testproject.api;
 
 import com.test.elenabedulina.testproject.api.models.CallStartResponse;
+import com.test.elenabedulina.testproject.api.models.CallsIdEndRequest;
 import com.test.elenabedulina.testproject.api.models.RaitingRequest;
 import com.test.elenabedulina.testproject.api.models.SignInRequest;
 import com.test.elenabedulina.testproject.api.models.SignInResponse;
@@ -21,8 +22,8 @@ public interface ZlifeService {
    Call<CallStartResponse> getId();
 
 
-//    @PUT("calls/{ID}/end")
-//    Call<CallsIdEndRequest> putID( @Path("ID") String id);
+    @PUT("calls/{ID}/end")
+    Call<CallsIdEndRequest> putID(@Path("ID") String id,@Body CallsIdEndRequest callsIdEndRequest);
 
 
     @PUT("calls/{ID}/rating")

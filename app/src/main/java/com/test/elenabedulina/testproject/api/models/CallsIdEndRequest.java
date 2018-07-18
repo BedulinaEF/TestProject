@@ -2,15 +2,15 @@ package com.test.elenabedulina.testproject.api.models;
 
 public class CallsIdEndRequest {
     //{ "call_duration": call_duration, "os": os, "os_version": os_version }
-    private String callDuration;
+    private int callDuration;
     private String os;
     private String osVersion;
 
-    public String getCallDuration() {
+    public int getCallDuration() {
         return callDuration;
     }
 
-    public void setCallDuration(String callDuration) {
+    public void setCallDuration(int callDuration) {
         this.callDuration = callDuration;
     }
 
