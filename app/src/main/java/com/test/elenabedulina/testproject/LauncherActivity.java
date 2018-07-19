@@ -34,7 +34,6 @@ public class LauncherActivity extends BaseActivity {
         etInn = findViewById(R.id.et_inn_id);
         etPassword = findViewById(R.id.et_password_id);
 
-
         Button btnLogin = findViewById(R.id.button_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -52,11 +51,9 @@ public class LauncherActivity extends BaseActivity {
         if (!innIsCorrect) {
             etInn.setError(getString(R.string.wrong_inn));
         }
-
         if (!passwordIsCorrect) {
             etPassword.setError(getString(R.string.wrong_password));
         }
-
         return innIsCorrect && passwordIsCorrect;
     }
 
@@ -81,7 +78,7 @@ public class LauncherActivity extends BaseActivity {
         SignInRequest signInRequest = new SignInRequest();
         signInRequest.setIin(etInn.getText().toString());
         signInRequest.setPassword(etPassword.getText().toString());
-        ((ApplicationZLife)getApplication()).getZlifeService().signIn(signInRequest).enqueue(new Callback<SignInResponse>() {
+        ((ApplicationZLife) getApplication()).getZlifeService().signIn(signInRequest).enqueue(new Callback<SignInResponse>() {
             @Override
             public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
                 if (response.code() >= 200 && response.code() < 300) {
@@ -117,10 +114,7 @@ public class LauncherActivity extends BaseActivity {
         editor.putString(Constants.KEY_CLIENT_UID, headerUID);
         editor.putString(Constants.KEY_CLIENT_TOKEN, headerAccessToken);
         editor.commit();
-
     }
-
-
 }
 
 

@@ -1,30 +1,26 @@
 <resources>
     <string name="app_name">Test Project</string>
-    <string name="title_activity_louncher">LouncherActivity</string>
+    <string name="title_activity_launcher">LauncherActivity</string>
     <string name="btn_login">Login</string>
     <string name="et_inn_hint">INN</string>
     <string name="et_password_hint">Password</string>
     <string name="call_center">Call Center</string>
-    <string name="text_call_center">Calling...</string>
-    <string name="call_center_message">Was it Helpfull?</string>
+    <string name="text_call_center">Calling…</string>
+    <string name="call_center_message">Was it Helpful?</string>
     <string name="yes_btn">Yes</string>
     <string name="no_btn">No</string>
     <string name="fail_btn">Fail</string>
     <string name="dialog_saved_data">Saved</string>
     <string name="wrong_inn">Wrong INN</string>
     <string name="wrong_password">Wrong password</string>
-    <string name="sign_in">Sign in...</string>
+    <string name="sign_in">Waiting…</string>
     <string name="error_dialog">Error</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="key_shared_pref">Shared Headers</string>
     <string name="key_header_client">Client</string>
     <string name="key_header_uid">UID</string>
     <string name="key_header_token">Token</string>
-    <string name="permission_title">Need permission to call and check call duration</string>
+    <string name="permission_title">Need permission to call</string>
     <string name="permission_yes">Yes</string>
     <string name="permission_no">No</string>
-
-
-
-
 </resources>

@@ -1,7 +1,6 @@
 package com.test.elenabedulina.testproject.api.models;
 
 public class CallsIdEndRequest {
-    //{ "call_duration": call_duration, "os": os, "os_version": os_version }
     private String callDuration;
     private String os="android";
     private String osVersion;
