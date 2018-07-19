@@ -20,7 +20,7 @@
     <string name="key_header_client">Client</string>
     <string name="key_header_uid">UID</string>
     <string name="key_header_token">Token</string>
-    <string name="permission_title">Need permission to call</string>
+    <string name="permission_title">Need permission to call and check call duration</string>
     <string name="permission_yes">Yes</string>
     <string name="permission_no">No</string>
 

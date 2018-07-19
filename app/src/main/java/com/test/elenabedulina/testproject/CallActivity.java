@@ -3,24 +3,38 @@ package com.test.elenabedulina.testproject;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.CallLog;
 import android.support.annotation.Nullable;
+import android.telecom.TelecomManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.test.elenabedulina.testproject.api.models.CallStartResponse;
 import com.test.elenabedulina.testproject.api.models.CallsIdEndRequest;
 import com.test.elenabedulina.testproject.api.models.RaitingRequest;
+
+import java.util.List;
+
+import javax.xml.datatype.Duration;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,10 +44,8 @@ import retrofit2.Response;
 public class CallActivity extends BaseActivity {
     public String callCenterNumber;
     public String takenID;
-    public int callDuration=5;
     public String os="Android";
-    public String osVersion="10.1";
-
+private int callDu;
     private final String TAG = CallActivity.class.getSimpleName();
 
 
@@ -54,24 +66,39 @@ public class CallActivity extends BaseActivity {
         });
     }
     private void requestPermissionCall(){
+//        public static final String PHONE;
         Dexter.withActivity(this)
-                .withPermission(Manifest.permission.CALL_PHONE)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        makeCallStartRequest();
-                    }
+                .withPermissions(Manifest.permission.CALL_PHONE,
+                        Manifest.permission.READ_CALL_LOG,
+                        Manifest.permission.READ_PHONE_STATE)
+                .withListener(new MultiplePermissionsListener() {
+                                  @Override
+                                  public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                      showPermissionDialog();
+//                                      makeCallStartRequest();
+                                  }
 
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-                        showPermissionDialog();
-                    }
+                                  @Override
+                                  public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                      showPermissionDialog();
 
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).check();
+                                  }
+                              }
+//                    @Override
+//                    public void onPermissionGranted(PermissionGrantedResponse response) {
+//                        makeCallStartRequest();
+//                    }
+//
+//                    @Override
+//                    public void onPermissionDenied(PermissionDeniedResponse response) {
+//                        showPermissionDialog();
+//                    }
+//
+//                    @Override
+//                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+//                        token.continuePermissionRequest();
+
+                ).check();
     }
     private void showPermissionDialog(){
         AlertDialog.Builder builder= new AlertDialog.Builder(this);
@@ -97,12 +124,7 @@ public class CallActivity extends BaseActivity {
         showProgress();
         // code for request
         processResponseCallStart();
-        makeCall();
-
-
-
     }
-
 
     private void processResponseCallStart() {
             ((ApplicationZLife)getApplication()).getZlifeService().getId().enqueue(new retrofit2.Callback<CallStartResponse>() {
@@ -112,7 +134,22 @@ public class CallActivity extends BaseActivity {
                         CallStartResponse bodyResponse = response.body();
                         takenID = bodyResponse.getContent().getId();
                         Log.i(TAG, takenID);
-                        doCallInfoRequest(5, callCenterNumber);
+                        makeCall();
+                        BroadcastReceiver phoneStateBroadcastReceiver= new BroadcastReceiver() {
+                            @Override
+                            public void onReceive(Context context, Intent intent) {
+//                                Log.i(TAG, intent.toString());
+                                String phoneState=intent.getStringExtra(TelephonyManager.EXTRA_STATE);
+                                if (TelephonyManager.EXTRA_STATE_IDLE.equals(phoneState)){
+                                    getDataCallDuration();
+                                    doCallInfoRequest(callCenterNumber);
+                                }
+
+                            }
+                        };
+                        IntentFilter intentFilter = new IntentFilter();
+                        intentFilter.addAction("android.intent.action.PHONE_STATE");
+                        registerReceiver(phoneStateBroadcastReceiver, intentFilter);
 
                     } else {
 
@@ -126,38 +163,30 @@ public class CallActivity extends BaseActivity {
                     errorDialog();
                     hideProgress();
                     Log.e(TAG, t.toString());
-
                 }
 
             });
-
         }
-
-
-
 
     private void makeCall() {
         //calling code
         Intent makeCallIntent= new Intent(Intent.ACTION_CALL);
         makeCallIntent.setData(Uri.parse("tel:"+callCenterNumber));
         this.startActivity(makeCallIntent);
-
-
+//        doCallInfoRequest(CallLog.Calls.DURATION, callCenterNumber);
     }
 
-
-
-
-
-    private void doCallInfoRequest(int callDuration, String callCenterNumber) {
+    private void doCallInfoRequest(String callCenterNumber) {
         showProgress();
-        processResponseCalling();
         showDialogCallCenter();
+        processResponseCalling();
     }
 
     private void processResponseCalling() {
       CallsIdEndRequest callsIdEndRequest = new CallsIdEndRequest();
-      callsIdEndRequest.setCallDuration(callDuration);
+//      String callDuration= CallLog.Calls.DURATION;
+      String osVersion = Build.VERSION.RELEASE;
+      callsIdEndRequest.setCallDuration(getDataCallDuration());
       callsIdEndRequest.setOs(os);
       callsIdEndRequest.setOsVersion(osVersion);
         ((ApplicationZLife)getApplication()).getZlifeService().putID(takenID, callsIdEndRequest).enqueue(new Callback<CallsIdEndRequest>() {
@@ -177,9 +206,16 @@ public class CallActivity extends BaseActivity {
 
             }
         });
-
-
     }
+    private String getDataCallDuration(){
+        Uri contacts = CallLog.Calls.CONTENT_URI;
+        Cursor managedCursor = this.getContentResolver().query(contacts, null, null, null, null);
+        int calDuration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
+        managedCursor.moveToLast();
+        String callDuration = managedCursor.getString(calDuration);
+        return callDuration;
+    }
+
     private void doDialogRequest(String  answer){
         RaitingRequest raitingRequest= new RaitingRequest();
         raitingRequest.setIsHelpful(answer);
