@@ -108,12 +108,12 @@ public class LauncherActivity extends BaseActivity {
 
 
     public void saveSharePref() {
-        SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.key_shared_pref), this.MODE_PRIVATE);
+        SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.key_shared_pref), MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(Constants.KEY_CLIENT_HEADER, headerClient);
         editor.putString(Constants.KEY_CLIENT_UID, headerUID);
         editor.putString(Constants.KEY_CLIENT_TOKEN, headerAccessToken);
-        editor.commit();
+        editor.apply();
     }
 }
 
