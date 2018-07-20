@@ -37,10 +37,10 @@ import retrofit2.Response;
 
 
 public class CallActivity extends BaseActivity {
+    private final String TAG = CallActivity.class.getSimpleName();
     public String callCenterNumber;
     public String takenID;
     public String os = "Android";
-    private final String TAG = CallActivity.class.getSimpleName();
     BroadcastReceiver phoneStateBroadcastReceiver;
 
     protected void registerReceiver() {

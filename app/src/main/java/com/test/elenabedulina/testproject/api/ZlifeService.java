@@ -14,23 +14,20 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ZlifeService {
-   @POST("sign_in")
-   @Headers("Content-type: application/json")
-   Call<SignInResponse> signIn(@Body SignInRequest signInModel);
+    @POST("sign_in")
+    @Headers("Content-type: application/json")
+    Call<SignInResponse> signIn(@Body SignInRequest signInModel);
 
     @POST("calls/start")
-   Call<CallStartResponse> getId();
+    Call<CallStartResponse> getId();
 
 
     @PUT("calls/{ID}/end")
-    Call<CallsIdEndRequest> putID(@Path("ID") String id,@Body CallsIdEndRequest callsIdEndRequest);
+    Call<CallsIdEndRequest> putID(@Path("ID") String id, @Body CallsIdEndRequest callsIdEndRequest);
 
 
     @PUT("calls/{ID}/rating")
     Call<RaitingRequest> putAnswer(@Path("ID") String id, @Body RaitingRequest raitingRequest);
-
-
-
 
 
 }

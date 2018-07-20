@@ -18,9 +18,9 @@ import retrofit2.Response;
 
 
 public class LauncherActivity extends BaseActivity {
+    private final String TAG = LauncherActivity.class.getSimpleName();
     private EditText etInn;
     private EditText etPassword;
-    private final String TAG = LauncherActivity.class.getSimpleName();
     private String headerClient;
     private String headerAccessToken;
     private String headerUID;

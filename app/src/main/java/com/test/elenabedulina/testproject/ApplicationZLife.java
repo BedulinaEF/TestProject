@@ -21,6 +21,7 @@ public class ApplicationZLife extends Application {
     private String uIDData;
     private String tokenData;
     private ZlifeService zlifeService;
+
     public ZlifeService getZlifeService() {
         return zlifeService;
     }
@@ -37,9 +38,9 @@ public class ApplicationZLife extends Application {
                     public Response intercept(Chain chain) throws IOException {
                         takePref();
                         Request request = chain.request().newBuilder()
-                                .addHeader(Constants.KEY_CLIENT_HEADER,clientData)
+                                .addHeader(Constants.KEY_CLIENT_HEADER, clientData)
                                 .addHeader(Constants.KEY_CLIENT_UID, uIDData)
-                                .addHeader(Constants.KEY_CLIENT_TOKEN,tokenData )
+                                .addHeader(Constants.KEY_CLIENT_TOKEN, tokenData)
                                 .build();
                         return chain.proceed(request);
                     }
@@ -52,16 +53,16 @@ public class ApplicationZLife extends Application {
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        zlifeService=retrofit.create(ZlifeService.class);
+        zlifeService = retrofit.create(ZlifeService.class);
     }
 
     public void takePref() {
         SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.key_shared_pref), LauncherActivity.MODE_PRIVATE);
-        String headerClient=getResources().getString(R.string.key_header_client);
-        String headerUID=getResources().getString(R.string.key_header_uid);
-        String headerToken=getResources().getString(R.string.key_header_token);
-        clientData=sharedPref.getString(Constants.KEY_CLIENT_HEADER, headerClient);
-        uIDData=sharedPref.getString(Constants.KEY_CLIENT_UID, headerUID);
-        tokenData=sharedPref.getString(Constants.KEY_CLIENT_TOKEN,headerToken );
+        String headerClient = getResources().getString(R.string.key_header_client);
+        String headerUID = getResources().getString(R.string.key_header_uid);
+        String headerToken = getResources().getString(R.string.key_header_token);
+        clientData = sharedPref.getString(Constants.KEY_CLIENT_HEADER, headerClient);
+        uIDData = sharedPref.getString(Constants.KEY_CLIENT_UID, headerUID);
+        tokenData = sharedPref.getString(Constants.KEY_CLIENT_TOKEN, headerToken);
     }
 }

@@ -30,7 +30,7 @@ public class SignInResponse {
         this.message = message;
     }
 
-    public String [] getErrors() {
+    public String[] getErrors() {
         return errors;
     }
 
