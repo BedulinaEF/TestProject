@@ -4,7 +4,6 @@ public class SignInRequest {
     private String iin;
     private String password;
 
-
     public String getIin() {
         return iin;
     }

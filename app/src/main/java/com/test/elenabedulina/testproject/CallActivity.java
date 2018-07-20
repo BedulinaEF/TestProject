@@ -1,6 +1,7 @@
 package com.test.elenabedulina.testproject;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -8,14 +9,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -42,11 +41,34 @@ public class CallActivity extends BaseActivity {
     public String takenID;
     public String os = "Android";
     private final String TAG = CallActivity.class.getSimpleName();
+    BroadcastReceiver phoneStateBroadcastReceiver;
 
+    protected void registerReceiver() {
+        phoneStateBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String phoneState = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
+                if (TelephonyManager.EXTRA_STATE_IDLE.equals(phoneState)) {
+                    getDataCallDuration();
+                    doCallInfoRequest();
+                }
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.intent.action.PHONE_STATE");
+        registerReceiver(phoneStateBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(phoneStateBroadcastReceiver);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        registerReceiver();
         callCenterNumber = getIntent().getStringExtra(Constants.CALL_CENTER_NUMBER_NAME);
         setContentView(R.layout.activity_call);
         Button btn_call_center = findViewById(R.id.btn_call_center);
@@ -115,20 +137,6 @@ public class CallActivity extends BaseActivity {
                     takenID = bodyResponse.getContent().getId();
                     Log.i(TAG, takenID);
                     makeCall();
-                    BroadcastReceiver phoneStateBroadcastReceiver = new BroadcastReceiver() {
-                        @Override
-                        public void onReceive(Context context, Intent intent) {
-                            String phoneState = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
-                            if (TelephonyManager.EXTRA_STATE_IDLE.equals(phoneState)) {
-                                getDataCallDuration();
-                                doCallInfoRequest(callCenterNumber);
-                            }
-                        }
-                    };
-                    IntentFilter intentFilter = new IntentFilter();
-                    intentFilter.addAction("android.intent.action.PHONE_STATE");
-                    registerReceiver(phoneStateBroadcastReceiver, intentFilter);
-
                 } else {
                     onFailure(call, new Exception(response.message()));
                 }
@@ -139,18 +147,19 @@ public class CallActivity extends BaseActivity {
             public void onFailure(Call<CallStartResponse> call, Throwable t) {
                 errorDialog();
                 hideProgress();
-                Log.e(TAG, t.toString());
             }
         });
     }
 
+    @SuppressLint("MissingPermission")
     private void makeCall() {
+        Log.e(TAG, "MAKECALL BLYACH!");
         Intent makeCallIntent = new Intent(Intent.ACTION_CALL);
         makeCallIntent.setData(Uri.parse("tel:" + callCenterNumber));
         this.startActivity(makeCallIntent);
     }
 
-    private void doCallInfoRequest(String callCenterNumber) {
+    private void doCallInfoRequest() {
         showProgress();
         showDialogCallCenter();
         processResponseCalling();
@@ -174,18 +183,30 @@ public class CallActivity extends BaseActivity {
             @Override
             public void onFailure(Call<CallsIdEndRequest> call, Throwable t) {
                 errorDialog();
-                Log.e(TAG, t.toString());
                 hideProgress();
             }
         });
     }
 
+    @SuppressLint("MissingPermission")
     private String getDataCallDuration() {
+        Cursor managedCursor = null;
+        String callDuration = "";
         Uri contacts = CallLog.Calls.CONTENT_URI;
-        Cursor managedCursor = this.getContentResolver().query(contacts, null, null, null, null);
-        int calDuration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
-        managedCursor.moveToLast();
-        String callDuration = managedCursor.getString(calDuration);
+        try {
+            managedCursor = this.getContentResolver().query(contacts, null, null, null, null);
+            int calDuration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
+            managedCursor.moveToLast();
+            callDuration = managedCursor.getString(calDuration);
+        } catch (Throwable throwable) {
+            if (managedCursor != null) {
+                managedCursor.close();
+            }
+        } finally {
+            if (managedCursor != null) {
+                managedCursor.close();
+            }
+        }
         return callDuration;
     }
 
@@ -203,11 +224,9 @@ public class CallActivity extends BaseActivity {
             @Override
             public void onFailure(Call<RaitingRequest> call, Throwable t) {
                 errorDialog();
-                Log.e(TAG, t.toString());
                 hideProgress();
             }
         });
-        Log.d(CallActivity.class.getSimpleName(), answer);
     }
 
     private void showDialogCallCenter() {

@@ -5,7 +5,6 @@ public class CallsIdEndRequest {
     private String os="android";
     private String osVersion;
 
-
     public String getCallDuration() {
         return callDuration;
     }
