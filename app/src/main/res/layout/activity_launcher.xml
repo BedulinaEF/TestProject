@@ -6,16 +6,21 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/et_inn_id"
+        android:id="@+id/et_inn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/et_inn_hint" />
+        android:hint="@string/et_inn_hint"
+        android:inputType="number"
+        android:maxLength="12"/>
 
     <EditText
-        android:id="@+id/et_password_id"
+        android:id="@+id/et_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/et_password_hint" />
+        android:hint="@string/et_password_hint"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:maxLength="12"/>
 
     <Button
         android:id="@+id/button_login"

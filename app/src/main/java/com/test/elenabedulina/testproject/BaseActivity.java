@@ -21,7 +21,7 @@ public abstract class BaseActivity extends Activity {
     }
 
     protected void hideProgress() {
-        dialog.hide();
+        dialog.dismiss();
     }
 
     public void errorDialog() {

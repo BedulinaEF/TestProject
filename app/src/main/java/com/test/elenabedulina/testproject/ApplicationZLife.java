@@ -29,6 +29,9 @@ public class ApplicationZLife extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        addHeaders();
+    }
+    public void addHeaders(){
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
@@ -57,12 +60,12 @@ public class ApplicationZLife extends Application {
     }
 
     public void takePref() {
-        SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.key_shared_pref), LauncherActivity.MODE_PRIVATE);
-        String headerClient = getResources().getString(R.string.key_header_client);
-        String headerUID = getResources().getString(R.string.key_header_uid);
-        String headerToken = getResources().getString(R.string.key_header_token);
-        clientData = sharedPref.getString(Constants.KEY_CLIENT_HEADER, headerClient);
-        uIDData = sharedPref.getString(Constants.KEY_CLIENT_UID, headerUID);
-        tokenData = sharedPref.getString(Constants.KEY_CLIENT_TOKEN, headerToken);
+        SharedPreferences sharedPref = this.getSharedPreferences(Constants.KEY_SHARED_PREF, LauncherActivity.MODE_PRIVATE);
+//        String headerClient = getResources().getString(R.string.key_header_client);
+//        String headerUID = getResources().getString(R.string.key_header_uid);
+//        String headerToken = getResources().getString(R.string.key_header_token);
+        clientData = sharedPref.getString(Constants.KEY_CLIENT_HEADER, Constants.KEY_HEADER_CLIENT);
+        uIDData = sharedPref.getString(Constants.KEY_CLIENT_UID, Constants.KEY_HEADER_UID);
+        tokenData = sharedPref.getString(Constants.KEY_CLIENT_TOKEN, Constants.KEY_HEADER_TOKEN);
     }
 }

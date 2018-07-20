@@ -39,8 +39,7 @@ import retrofit2.Response;
 public class CallActivity extends BaseActivity {
     private final String TAG = CallActivity.class.getSimpleName();
     public String callCenterNumber;
-    public String takenID;
-    public String os = "Android";
+    public String callID;
     BroadcastReceiver phoneStateBroadcastReceiver;
 
     protected void registerReceiver() {
@@ -134,8 +133,7 @@ public class CallActivity extends BaseActivity {
             public void onResponse(Call<CallStartResponse> call, Response<CallStartResponse> response) {
                 if (response.code() >= 200 && response.code() < 300) {
                     CallStartResponse bodyResponse = response.body();
-                    takenID = bodyResponse.getContent().getId();
-                    Log.i(TAG, takenID);
+                    callID = bodyResponse.getContent().getId();
                     makeCall();
                 } else {
                     onFailure(call, new Exception(response.message()));
@@ -153,7 +151,6 @@ public class CallActivity extends BaseActivity {
 
     @SuppressLint("MissingPermission")
     private void makeCall() {
-        Log.e(TAG, "MAKECALL BLYACH!");
         Intent makeCallIntent = new Intent(Intent.ACTION_CALL);
         makeCallIntent.setData(Uri.parse("tel:" + callCenterNumber));
         this.startActivity(makeCallIntent);
@@ -169,9 +166,9 @@ public class CallActivity extends BaseActivity {
         CallsIdEndRequest callsIdEndRequest = new CallsIdEndRequest();
         String osVersion = Build.VERSION.RELEASE;
         callsIdEndRequest.setCallDuration(getDataCallDuration());
-        callsIdEndRequest.setOs(os);
+        callsIdEndRequest.setOs(Constants.os);
         callsIdEndRequest.setOsVersion(osVersion);
-        ((ApplicationZLife) getApplication()).getZlifeService().putID(takenID, callsIdEndRequest).enqueue(new Callback<CallsIdEndRequest>() {
+        ((ApplicationZLife) getApplication()).getZlifeService().putID(callID, callsIdEndRequest).enqueue(new Callback<CallsIdEndRequest>() {
             @Override
             public void onResponse(Call<CallsIdEndRequest> call, Response<CallsIdEndRequest> response) {
                 if (response.code() <= 200 && response.code() > 300) {
@@ -199,9 +196,8 @@ public class CallActivity extends BaseActivity {
             managedCursor.moveToLast();
             callDuration = managedCursor.getString(calDuration);
         } catch (Throwable throwable) {
-            if (managedCursor != null) {
-                managedCursor.close();
-            }
+            Log.e(TAG, throwable.toString());
+
         } finally {
             if (managedCursor != null) {
                 managedCursor.close();
@@ -213,7 +209,7 @@ public class CallActivity extends BaseActivity {
     private void doDialogRequest(String answer) {
         RaitingRequest raitingRequest = new RaitingRequest();
         raitingRequest.setIsHelpful(answer);
-        ((ApplicationZLife) getApplication()).getZlifeService().putAnswer(takenID, raitingRequest).enqueue(new Callback<RaitingRequest>() {
+        ((ApplicationZLife) getApplication()).getZlifeService().putAnswer(callID, raitingRequest).enqueue(new Callback<RaitingRequest>() {
             @Override
             public void onResponse(Call<RaitingRequest> call, Response<RaitingRequest> response) {
                 if (response.code() <= 200 && response.code() > 300) {

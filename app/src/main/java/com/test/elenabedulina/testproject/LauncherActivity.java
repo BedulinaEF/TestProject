@@ -30,13 +30,15 @@ public class LauncherActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
-        etInn = findViewById(R.id.et_inn_id);
-        etPassword = findViewById(R.id.et_password_id);
+        etInn = findViewById(R.id.et_inn);
+        etPassword = findViewById(R.id.et_password);
 
         Button btnLogin = findViewById(R.id.button_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                makePostSignIn();
+                if (checkInput()){
+                makePostSignIn();}
             }
         });
     }
@@ -62,7 +64,6 @@ public class LauncherActivity extends BaseActivity {
     }
 
     private void startCallActivity(String number) {
-
         Intent launcherIntent = new Intent(LauncherActivity.this,
                 CallActivity.class);
         launcherIntent.putExtra(Constants.CALL_CENTER_NUMBER_NAME, number);
@@ -71,7 +72,6 @@ public class LauncherActivity extends BaseActivity {
             startActivity(launcherIntent);
         }
     }
-
 
     private void doSingIn() {
         SignInRequest signInRequest = new SignInRequest();
@@ -87,10 +87,9 @@ public class LauncherActivity extends BaseActivity {
                     headerClient = headers.get("Client");
                     headerAccessToken = headers.get("Access-token");
                     headerUID = headers.get("UID");
-                    saveSharePref();
+                    savePreferences();
                     startCallActivity(numberCall);
                 } else {
-
                     onFailure(call, new Exception(response.message()));
                 }
                 hideProgress();
@@ -104,9 +103,8 @@ public class LauncherActivity extends BaseActivity {
         });
     }
 
-
-    public void saveSharePref() {
-        SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.key_shared_pref), MODE_PRIVATE);
+    public void savePreferences() {
+        SharedPreferences sharedPref = this.getSharedPreferences(Constants.KEY_SHARED_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(Constants.KEY_CLIENT_HEADER, headerClient);
         editor.putString(Constants.KEY_CLIENT_UID, headerUID);
